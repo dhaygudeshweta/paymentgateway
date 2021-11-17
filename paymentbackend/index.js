@@ -12,7 +12,7 @@ app.get("/",(req,res)=>{
 })
 app.post("/payment",(req,res)=>{
     const {product,token}=req.body;
-    console.log("PRODUCT",product);
+    console.log("product",product);
     console.log("Price",product.price);
 
     const idempontencyKey=uuid();
@@ -25,17 +25,17 @@ app.post("/payment",(req,res)=>{
   }).then (customer=>{
       stripe.charges.create({
           amount:product.price *100,
-          currency:'usd',
+          currency:"usd",
           customer:customer.id,
           receipt_email:token.email,
           description:`purchase${product.name}`,
           shipping:{
               name:token.card.name,
-              address:token.card.address_country,
+              address:{country:token.card.address_country}
           }
-      },{idempontencyKey})
+      },{idempontencyKey});
   }).then(result=>res.status(200).json(result))
-     .catch(error=>console.error(error));
+     .catch(error=>console.log(error));
 })
 
 
